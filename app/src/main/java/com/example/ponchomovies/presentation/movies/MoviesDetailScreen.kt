@@ -36,7 +36,7 @@ fun MoviesDetailScreen(
     ConstraintLayout(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.onSecondaryContainer)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         val (banner, poster, descriptionDetail, body) = createRefs()
         val topGuide = createGuidelineFromTop(0.2f)
@@ -56,7 +56,7 @@ fun MoviesDetailScreen(
                 top.linkTo(topGuide)
                 start.linkTo(parent.start)
             }
-            .height(200.dp)
+            .height(130.dp)
         )
 
         ContentTitleDetail(
@@ -71,7 +71,7 @@ fun MoviesDetailScreen(
             title = title,
             releaseDate = releaseDate,
         )
-
+        Spacer(modifier = Modifier.height(25.dp))
         ContentDescription(
             description = description,
             modifier = Modifier
@@ -80,7 +80,7 @@ fun MoviesDetailScreen(
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                 }
-                .padding(16.dp),
+                .padding(top = 16.dp, start = 8.dp, end = 8.dp, bottom = 16.dp),
             navController = navController
         )
     }
@@ -105,8 +105,8 @@ fun ContentPosterImage(posterImage: String?, modifier: Modifier) {
         placeholder = painterResource(id = R.drawable.avatar_place),
         contentDescription = "*",
         modifier = modifier
-            .padding(start = 16.dp)
-            .fillMaxWidth(.4f)
+            .padding(start = 8.dp)
+            .fillMaxWidth(.35f)
             .clip(RoundedCornerShape(16.dp)),
         contentScale = ContentScale.Crop
     )
@@ -126,7 +126,7 @@ fun ContentTitleDetail(
             style = TextStyle(
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontFamily = FontFamily.Monospace
             )
         )
@@ -136,7 +136,7 @@ fun ContentTitleDetail(
             style = TextStyle(
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSecondary,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontFamily = FontFamily.Monospace
             )
         )
@@ -150,20 +150,19 @@ fun ContentDescription(description: String?, modifier: Modifier, navController: 
         modifier = modifier,
         shape = Shapes.extraLarge,
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            containerColor = MaterialTheme.colorScheme.surface,
         ),
         elevation = CardDefaults.cardElevation(8.dp),
         content = {
             Column(
                 modifier = modifier
-                    .background(MaterialTheme.colorScheme.onPrimaryContainer)
             ) {
                 Text(
                     text = description ?: "",
                     style = TextStyle(
                         fontSize = 16.sp,
                         fontFamily = FontFamily.SansSerif,
-                        color = MaterialTheme.colorScheme.onSecondary
+                        color = MaterialTheme.colorScheme.onSurface
                     ),
                     modifier = modifier.padding(start = 16.dp)
                 )

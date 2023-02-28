@@ -40,20 +40,19 @@ fun MoviesScreen(navController: NavController, moviesViewModel: MoviesViewModel)
     val movies: List<MovieResponse> by moviesViewModel.movie.observeAsState(initial = emptyList())
     val isLoadingMovies: Boolean by moviesViewModel.isLoading.observeAsState(initial = true)
     moviesViewModel.getMovies()
-    PonchoMoviesTheme() {
-        if (isLoadingMovies) {
-            LoadingScreen()
-        } else {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier
-                    .background(MaterialTheme.colorScheme.onSecondaryContainer)
-            ) {
-                items(movies) { movieItem ->
-                    MoviesItemScreen(moviesEntity = movieItem, navController = navController)
-                }
+    if (isLoadingMovies) {
+        LoadingScreen()
+    } else {
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.background)
+                .padding(start = 8.dp, end = 8.dp)
+        ) {
+            items(movies) { movieItem ->
+                MoviesItemScreen(moviesEntity = movieItem, navController = navController)
             }
         }
     }
@@ -76,70 +75,73 @@ fun LoadingScreen() {
 fun MoviesItemScreen(moviesEntity: MovieResponse, navController: NavController) {
     Card(
         modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(16.dp)),
+            .fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.onSecondaryContainer
+        ),
         elevation = CardDefaults.cardElevation(12.dp),
-        shape = MaterialTheme.shapes.medium
-    ) {
-        Column(
-            modifier =
-            Modifier
-                .clickable {
-                    navController.navigate(
-                        MoviesNavigation.MovieDetail.createRoute(
-                            moviesEntity.originalTitle,
-                            moviesEntity.overview,
-                            moviesEntity.backdropPath,
-                            moviesEntity.posterPath,
-                            moviesEntity.releaseDate
+        shape = MaterialTheme.shapes.extraLarge,
+        content = {
+            Column(
+                modifier =
+                Modifier
+                    .clickable {
+                        navController.navigate(
+                            MoviesNavigation.MovieDetail.createRoute(
+                                moviesEntity.originalTitle,
+                                moviesEntity.overview,
+                                moviesEntity.backdropPath,
+                                moviesEntity.posterPath,
+                                moviesEntity.releaseDate
+                            )
                         )
-                    )
-                }
-                .background(MaterialTheme.colorScheme.onPrimaryContainer)
-                .padding(bottom = 8.dp)
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
+                    }
+                    .background(MaterialTheme.colorScheme.onPrimaryContainer)
+                    .padding(bottom = 8.dp)
             ) {
-                AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data("${PonchoMoviesConstants.URL_IMAGES}/${moviesEntity.posterPath}")
-                        .crossfade(3000)
-                        .build(),
-                    contentDescription = "*",
-                    contentScale = ContentScale.Crop,
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(16.dp))
+                ) {
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data("${PonchoMoviesConstants.URL_IMAGES}/${moviesEntity.posterPath}")
+                            .crossfade(3000)
+                            .build(),
+                        contentDescription = "*",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(16.dp))
+                    )
+                    ProgressComponent(
+                        modifier = Modifier
+                            .align(Alignment.BottomStart)
+                            .padding(8.dp),
+                        moviesEntity.voteAverage.toString()
+                    )
+                }
+                Text(
+                    text = moviesEntity.title,
+                    style = TextStyle(
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        fontSize = 24.sp
+                    ),
+                    modifier = Modifier.padding(start = 16.dp)
                 )
-                ProgressComponent(
-                    modifier = Modifier
-                        .align(Alignment.BottomStart)
-                        .padding(8.dp),
-                    moviesEntity.voteAverage.toString()
+                Text(
+                    text = moviesEntity.releaseDate,
+                    style = TextStyle(
+                        fontWeight = FontWeight.Light,
+                        color = MaterialTheme.colorScheme.onTertiary,
+                        fontSize = 16.sp
+                    ),
+                    modifier = Modifier.padding(start = 16.dp)
                 )
             }
-            Text(
-                text = moviesEntity.title,
-                style = TextStyle(
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    fontSize = 24.sp
-                ),
-                modifier = Modifier.padding(start = 16.dp)
-            )
-            Text(
-                text = moviesEntity.releaseDate,
-                style = TextStyle(
-                    fontWeight = FontWeight.Light,
-                    color = MaterialTheme.colorScheme.onTertiary,
-                    fontSize = 16.sp
-                ),
-                modifier = Modifier.padding(start = 16.dp)
-            )
         }
-    }
+    )
 }
 
 @Composable
@@ -150,12 +152,12 @@ fun ProgressComponent(modifier: Modifier, percent: String) {
         modifier = modifier
             .clip(CircleShape)
             .size(50.dp)
-            .background(MaterialTheme.colorScheme.onSurface)
+            .background(MaterialTheme.colorScheme.onBackground)
     ) {
         CircularProgressIndicator(
             modifier = Modifier.fillMaxSize(),
             progress = new,
-            color = if (new < 0.7f) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.surfaceTint
+            color = if (new < 0.7f) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary
         )
         Text(
             text = "$percent",
