@@ -10,17 +10,19 @@ import com.example.ponchomovies.presentation.home.HomeScreen
 import com.example.ponchomovies.presentation.movies.MoviesDetailScreen
 import com.example.ponchomovies.presentation.movies.MoviesScreen
 import com.example.ponchomovies.presentation.movies.viewmodel.MoviesViewModel
+import com.example.ponchomovies.ui.theme.PonchoMoviesTheme
 
 sealed class MoviesNavigation(val route: String) {
     object MoviesHome : MoviesNavigation(route = "moviesHome")
     object MoviesList : MoviesNavigation(route = "moviesList")
-    object MovieDetail : MoviesNavigation(route = "movieDetail?title={title}&description={description}&imageUrl={imageUrl}&posterImage={posterImage}&releaseDate={releaseDate}") {
+    object MovieDetail :
+        MoviesNavigation(route = "movieDetail?title={title}&description={description}&imageUrl={imageUrl}&posterImage={posterImage}&releaseDate={releaseDate}") {
         fun createRoute(
             title: String,
             description: String,
-            imageUrl:String,
-            posterImage:String,
-            releaseDate:String
+            imageUrl: String,
+            posterImage: String,
+            releaseDate: String
         ): String {
             return "movieDetail?title=$title&description=$description&imageUrl=$imageUrl&posterImage=$posterImage&releaseDate=$releaseDate"
         }
@@ -35,17 +37,21 @@ fun MoviesNavigationHost(navController: NavHostController, viewModel: MoviesView
         startDestination = MoviesNavigation.MoviesHome.route
     ) {
         composable(MoviesNavigation.MoviesHome.route) {
-            HomeScreen(navController)
+            PonchoMoviesTheme(useDarkTheme = false) {
+                HomeScreen(navController)
+            }
         }
         composable(MoviesNavigation.MoviesList.route) {
-            MoviesScreen(navController = navController, moviesViewModel = viewModel)
+            PonchoMoviesTheme(useDarkTheme = false) {
+                MoviesScreen(navController = navController, moviesViewModel = viewModel)
+            }
         }
         composable(route = MoviesNavigation.MovieDetail.route, arguments = listOf(
             navArgument("title") {
                 defaultValue = "title default"
             },
             navArgument("description") {
-               defaultValue = "description default"
+                defaultValue = "description default"
             }
         )) { navBackStackEntry ->
             val title = navBackStackEntry.arguments?.getString("title")
@@ -53,14 +59,16 @@ fun MoviesNavigationHost(navController: NavHostController, viewModel: MoviesView
             val imageUrl = navBackStackEntry.arguments?.getString("imageUrl")
             val posterImage = navBackStackEntry.arguments?.getString("posterImage")
             val releaseDate = navBackStackEntry.arguments?.getString("releaseDate")
-            MoviesDetailScreen(
-                navController = navController,
-                title = title,
-                description = description,
-                imageUrl = imageUrl,
-                posterImage = posterImage,
-                releaseDate = releaseDate
-            )
+            PonchoMoviesTheme(useDarkTheme = false) {
+                MoviesDetailScreen(
+                    navController = navController,
+                    title = title,
+                    description = description,
+                    imageUrl = imageUrl,
+                    posterImage = posterImage,
+                    releaseDate = releaseDate
+                )
+            }
         }
     }
 }

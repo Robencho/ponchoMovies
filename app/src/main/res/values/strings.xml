@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">PonchoMovies</string>
+
+    <string name="home_description">
+        En esta app usamos el API de The Movie DB, con el fin de mostrar una lista selecta de peliculas y sus detalles correspondientes.
+        Este proyecto está desarrollado con Jetpack Compose, kotlin y usamos clean architecture.
+    </string>
 </resources>
