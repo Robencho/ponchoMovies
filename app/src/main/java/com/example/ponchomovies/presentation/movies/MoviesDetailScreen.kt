@@ -1,15 +1,28 @@
 package com.example.ponchomovies.presentation.movies
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Text
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Button
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -21,9 +34,13 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.ponchomovies.navigation.MoviesNavigation
 import com.example.ponchomovies.utils.PonchoMoviesConstants
-import com.example.ponchomovies.R
+import com.example.ponchomovies.R.string
+import com.example.ponchomovies.R.drawable
+import com.example.ponchomovies.presentation.common.ToolbarScreen
 import com.example.ponchomovies.ui.theme.Shapes
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MoviesDetailScreen(
     navController: NavController,
@@ -33,57 +50,69 @@ fun MoviesDetailScreen(
     posterImage: String?,
     releaseDate: String?
 ) {
-    ConstraintLayout(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-    ) {
-        val (banner, poster, descriptionDetail, body) = createRefs()
-        val topGuide = createGuidelineFromTop(0.2f)
-
-        ContentBannerScreen(imageUrl = imageUrl, modifier = Modifier.constrainAs(
-            banner
-        ) {
-            top.linkTo(parent.top)
-            start.linkTo(parent.start)
-            end.linkTo(parent.end)
-        }
-        )
-        ContentPosterImage(posterImage = posterImage, modifier = Modifier
-            .constrainAs(
-                poster
+    Scaffold(
+        modifier = Modifier,
+        topBar = {
+            ToolbarScreen(onIconPressed = {
+                navController.popBackStack()
+            },
+            title = title?: "Holi")
+        },
+        content = {
+            ConstraintLayout(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.onPrimaryContainer)
             ) {
-                top.linkTo(topGuide)
-                start.linkTo(parent.start)
-            }
-            .height(130.dp)
-        )
+                val (banner, poster, descriptionDetail, body) = createRefs()
+                val topGuide = createGuidelineFromTop(0.2f)
 
-        ContentTitleDetail(
-            modifier = Modifier
-                .constrainAs(
-                    body
+                ContentBannerScreen(imageUrl = imageUrl, modifier = Modifier.constrainAs(
+                    banner
                 ) {
-                    top.linkTo(banner.bottom)
-                    start.linkTo(poster.end)
-                    end.linkTo(parent.end)
-                },
-            title = title,
-            releaseDate = releaseDate,
-        )
-        Spacer(modifier = Modifier.height(25.dp))
-        ContentDescription(
-            description = description,
-            modifier = Modifier
-                .constrainAs(descriptionDetail) {
-                    top.linkTo(poster.bottom)
+                    top.linkTo(parent.top)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                 }
-                .padding(top = 16.dp, start = 8.dp, end = 8.dp, bottom = 16.dp),
-            navController = navController
-        )
-    }
+                )
+                ContentPosterImage(posterImage = posterImage, modifier = Modifier
+                    .constrainAs(
+                        poster
+                    ) {
+                        top.linkTo(topGuide)
+                        start.linkTo(parent.start)
+                    }
+                    .height(130.dp)
+                )
+
+                ContentTitleDetail(
+                    modifier = Modifier
+                        .constrainAs(
+                            body
+                        ) {
+                            top.linkTo(banner.bottom)
+                            start.linkTo(poster.end)
+                            end.linkTo(parent.end)
+                        },
+                    title = title,
+                    releaseDate = releaseDate,
+                )
+                Spacer(modifier = Modifier.height(25.dp))
+                ContentDescription(
+                    description = description,
+                    modifier = Modifier
+                        .constrainAs(descriptionDetail) {
+                            top.linkTo(poster.bottom)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                        }
+                        .padding(top = 16.dp, start = 8.dp, end = 8.dp, bottom = 16.dp),
+                    navController = navController
+                )
+            }
+        }
+    )
+
 }
 
 @Composable
@@ -91,7 +120,7 @@ fun ContentBannerScreen(imageUrl: String?, modifier: Modifier) {
     Column(modifier = modifier) {
         AsyncImage(
             model = "${PonchoMoviesConstants.URL_IMAGES}/$imageUrl",
-            placeholder = painterResource(id = R.drawable.background_movie),
+            placeholder = painterResource(id = drawable.background_movie),
             contentDescription = "*"
         )
     }
@@ -102,7 +131,7 @@ fun ContentBannerScreen(imageUrl: String?, modifier: Modifier) {
 fun ContentPosterImage(posterImage: String?, modifier: Modifier) {
     AsyncImage(
         model = "${PonchoMoviesConstants.URL_IMAGES}/$posterImage",
-        placeholder = painterResource(id = R.drawable.avatar_place),
+        placeholder = painterResource(id = drawable.avatar_place),
         contentDescription = "*",
         modifier = modifier
             .padding(start = 8.dp)
@@ -126,7 +155,7 @@ fun ContentTitleDetail(
             style = TextStyle(
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = MaterialTheme.colorScheme.onPrimary,
                 fontFamily = FontFamily.Monospace
             )
         )
@@ -136,7 +165,7 @@ fun ContentTitleDetail(
             style = TextStyle(
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = MaterialTheme.colorScheme.onPrimary,
                 fontFamily = FontFamily.Monospace
             )
         )
@@ -150,7 +179,7 @@ fun ContentDescription(description: String?, modifier: Modifier, navController: 
         modifier = modifier,
         shape = Shapes.extraLarge,
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
+            containerColor = MaterialTheme.colorScheme.onSecondaryContainer,
         ),
         elevation = CardDefaults.cardElevation(8.dp),
         content = {
@@ -162,7 +191,7 @@ fun ContentDescription(description: String?, modifier: Modifier, navController: 
                     style = TextStyle(
                         fontSize = 16.sp,
                         fontFamily = FontFamily.SansSerif,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = MaterialTheme.colorScheme.onSecondary
                     ),
                     modifier = modifier.padding(start = 16.dp)
                 )
@@ -174,7 +203,7 @@ fun ContentDescription(description: String?, modifier: Modifier, navController: 
                         .fillMaxWidth()
                         .padding(start = 16.dp, end = 16.dp)
                 ) {
-                    Text(text = "Volver al Home")
+                    Text(text = stringResource(id = string.btn_on_back))
                 }
             }
         }
@@ -187,10 +216,10 @@ fun MoviesDetailPreview() {
     val ctx = LocalContext.current
     MoviesDetailScreen(
         navController = NavController(ctx),
-        title = "Titulo 1",
-        description = "Description 1",
-        imageUrl = "https://www.themoviedb.org/t/p/w1920_and_h800_multi_faces/2ZNFu0hkSVtAI6LRWGIlCPNd1Tj.jpg",
+        title = "",
+        description = "",
+        imageUrl = "",
         posterImage = "",
-        releaseDate = "2022"
+        releaseDate = ""
     )
 }

@@ -1,8 +1,17 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.example.ponchomovies.presentation.movies
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -17,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,15 +37,15 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.ponchomovies.domain.models.MovieResponse
 import com.example.ponchomovies.navigation.MoviesNavigation
+import com.example.ponchomovies.presentation.common.ToolbarScreen
 import com.example.ponchomovies.presentation.movies.viewmodel.MoviesViewModel
 import com.example.ponchomovies.ui.theme.PonchoMoviesTheme
 import com.example.ponchomovies.utils.PonchoMoviesConstants
+import com.example.ponchomovies.R.string
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MoviesScreen(navController: NavController, moviesViewModel: MoviesViewModel) {
-
-    /** ojo guiarme en este proyecto  https://github.com/YassinAJDI/PopularMovies*/
-    /** Movies theme compose: https://material.io/blog/material-theme-builder*/
 
     val movies: List<MovieResponse> by moviesViewModel.movie.observeAsState(initial = emptyList())
     val isLoadingMovies: Boolean by moviesViewModel.isLoading.observeAsState(initial = true)
@@ -43,18 +53,28 @@ fun MoviesScreen(navController: NavController, moviesViewModel: MoviesViewModel)
     if (isLoadingMovies) {
         LoadingScreen()
     } else {
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.background)
-                .padding(start = 8.dp, end = 8.dp)
-        ) {
-            items(movies) { movieItem ->
-                MoviesItemScreen(moviesEntity = movieItem, navController = navController)
+        Scaffold(
+            modifier = Modifier,
+            topBar = {
+                ToolbarScreen(onIconPressed = {
+                    navController.popBackStack()
+                }, title = stringResource(id = string.top_bar_title_home))
+            },
+            content = {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier
+                        .background(MaterialTheme.colorScheme.onPrimaryContainer)
+                        .padding(start = 8.dp, end = 8.dp)
+                ) {
+                    items(movies) { movieItem ->
+                        MoviesItemScreen(moviesEntity = movieItem, navController = navController)
+                    }
+                }
             }
-        }
+        )
     }
 }
 
@@ -181,8 +201,4 @@ fun MoviesItemPreview() {
             navController = NavController(ctx)
         )
     }
-    //ProgressComponent()
 }
-
-
-// todo move this function to view model

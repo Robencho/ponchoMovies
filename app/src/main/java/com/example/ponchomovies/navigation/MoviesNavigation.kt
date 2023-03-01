@@ -30,19 +30,19 @@ sealed class MoviesNavigation(val route: String) {
 }
 
 @Composable
-fun MoviesNavigationHost(navController: NavHostController, viewModel: MoviesViewModel) {
+fun MoviesNavigationHost(navController: NavHostController, viewModel: MoviesViewModel, theme:Boolean) {
     val ctx = LocalContext.current
     NavHost(
         navController = navController,
         startDestination = MoviesNavigation.MoviesHome.route
     ) {
         composable(MoviesNavigation.MoviesHome.route) {
-            PonchoMoviesTheme(useDarkTheme = false) {
+            PonchoMoviesTheme(useDarkTheme = theme) {
                 HomeScreen(navController)
             }
         }
         composable(MoviesNavigation.MoviesList.route) {
-            PonchoMoviesTheme(useDarkTheme = false) {
+            PonchoMoviesTheme(useDarkTheme = theme) {
                 MoviesScreen(navController = navController, moviesViewModel = viewModel)
             }
         }
@@ -59,7 +59,7 @@ fun MoviesNavigationHost(navController: NavHostController, viewModel: MoviesView
             val imageUrl = navBackStackEntry.arguments?.getString("imageUrl")
             val posterImage = navBackStackEntry.arguments?.getString("posterImage")
             val releaseDate = navBackStackEntry.arguments?.getString("releaseDate")
-            PonchoMoviesTheme(useDarkTheme = false) {
+            PonchoMoviesTheme(useDarkTheme = theme) {
                 MoviesDetailScreen(
                     navController = navController,
                     title = title,
