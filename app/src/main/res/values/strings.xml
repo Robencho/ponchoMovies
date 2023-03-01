@@ -1,8 +1,16 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">PonchoMovies</string>
 
+    <!-- App Home-->
+
+    <string name="title_home">App Movies by Rubio Poncho Dev</string>
     <string name="home_description">
         En esta app usamos el API de The Movie DB, con el fin de mostrar una lista selecta de peliculas y sus detalles correspondientes.
         Este proyecto está desarrollado con Jetpack Compose, kotlin y usamos clean architecture.
     </string>
+    <string name="top_bar_title_home" tools:ignore="ExtraTranslation">Home - Poncho Movies</string>
+    <string name="btn_home_go_to_movies">Go To Poncho Movies</string>
+
+    <!-- Movies Detail Strings-->
+    <string name="btn_on_back">Back to Movies</string>
 </resources>

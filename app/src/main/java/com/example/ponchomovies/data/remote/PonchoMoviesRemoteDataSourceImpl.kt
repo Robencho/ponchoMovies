@@ -18,7 +18,6 @@ class PonchoMoviesRemoteDataSourceImpl @Inject constructor(
     ) {
         when (category) {
             PonchoMoviesConstants.EP_MOVIE_POPULAR -> {
-                // typeMovie = ponchoMoviesApi.getPonchoPopularMovies(PonchoMoviesConstants.KEY_MOVIE)
                 ponchoMoviesApi.getPonchoPopularMovies(KEY_MOVIE)
                     .enqueue(object : Callback<MoviesResponse> {
                         override fun onResponse(
