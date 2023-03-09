@@ -42,39 +42,46 @@ import com.example.ponchomovies.presentation.movies.viewmodel.MoviesViewModel
 import com.example.ponchomovies.ui.theme.PonchoMoviesTheme
 import com.example.ponchomovies.utils.PonchoMoviesConstants
 import com.example.ponchomovies.R.string
+import com.example.ponchomovies.framework.state.ScreenState
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MoviesScreen(navController: NavController, moviesViewModel: MoviesViewModel) {
 
     val movies: List<MovieResponse> by moviesViewModel.movie.observeAsState(initial = emptyList())
-    val isLoadingMovies: Boolean by moviesViewModel.isLoading.observeAsState(initial = true)
-    moviesViewModel.getMovies()
-    if (isLoadingMovies) {
-        LoadingScreen()
-    } else {
-        Scaffold(
-            modifier = Modifier,
-            topBar = {
-                ToolbarScreen(onIconPressed = {
-                    navController.popBackStack()
-                }, title = stringResource(id = string.top_bar_title_home))
-            },
-            content = {
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier
-                        .background(MaterialTheme.colorScheme.onPrimaryContainer)
-                        .padding(start = 8.dp, end = 8.dp)
-                ) {
-                    items(movies) { movieItem ->
-                        MoviesItemScreen(moviesEntity = movieItem, navController = navController)
+    val status: ScreenState by moviesViewModel.status.observeAsState(initial = ScreenState.Empty)
+
+    when(status){
+        is ScreenState.Empty, ScreenState.Loading -> {
+            LoadingScreen()
+            if (movies.isEmpty())
+                moviesViewModel.getMovies(PonchoMoviesConstants.EP_MOVIE_POPULAR)
+        }
+        is ScreenState.Success -> {
+            Scaffold(
+                modifier = Modifier,
+                topBar = {
+                    ToolbarScreen(onIconPressed = {
+                        navController.popBackStack()
+                    }, title = stringResource(id = string.top_bar_title_home))
+                },
+                content = {
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(2),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.primary)
+                            .padding(start = 8.dp, end = 8.dp)
+                    ) {
+                        items(movies) { movieItem ->
+                            MoviesItemScreen(moviesEntity = movieItem, navController = navController)
+                        }
                     }
                 }
-            }
-        )
+            )
+        }
+        else -> Unit
     }
 }
 
@@ -97,7 +104,7 @@ fun MoviesItemScreen(moviesEntity: MovieResponse, navController: NavController) 
         modifier = Modifier
             .fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.onSecondaryContainer
+            containerColor = MaterialTheme.colorScheme.primaryContainer
         ),
         elevation = CardDefaults.cardElevation(12.dp),
         shape = MaterialTheme.shapes.extraLarge,
@@ -116,7 +123,7 @@ fun MoviesItemScreen(moviesEntity: MovieResponse, navController: NavController) 
                             )
                         )
                     }
-                    .background(MaterialTheme.colorScheme.onPrimaryContainer)
+                    .background(MaterialTheme.colorScheme.primaryContainer)
                     .padding(bottom = 8.dp)
             ) {
                 Box(
@@ -145,7 +152,7 @@ fun MoviesItemScreen(moviesEntity: MovieResponse, navController: NavController) 
                     text = moviesEntity.title,
                     style = TextStyle(
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onPrimary,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
                         fontSize = 24.sp
                     ),
                     modifier = Modifier.padding(start = 16.dp)
@@ -154,7 +161,7 @@ fun MoviesItemScreen(moviesEntity: MovieResponse, navController: NavController) 
                     text = moviesEntity.releaseDate,
                     style = TextStyle(
                         fontWeight = FontWeight.Light,
-                        color = MaterialTheme.colorScheme.onTertiary,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
                         fontSize = 16.sp
                     ),
                     modifier = Modifier.padding(start = 16.dp)

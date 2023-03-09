@@ -62,7 +62,7 @@ fun MoviesDetailScreen(
             ConstraintLayout(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.onPrimaryContainer)
+                    .background(MaterialTheme.colorScheme.primary)
             ) {
                 val (banner, poster, descriptionDetail, body) = createRefs()
                 val topGuide = createGuidelineFromTop(0.2f)
@@ -179,7 +179,7 @@ fun ContentDescription(description: String?, modifier: Modifier, navController: 
         modifier = modifier,
         shape = Shapes.extraLarge,
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.onSecondaryContainer,
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
         ),
         elevation = CardDefaults.cardElevation(8.dp),
         content = {
@@ -191,7 +191,7 @@ fun ContentDescription(description: String?, modifier: Modifier, navController: 
                     style = TextStyle(
                         fontSize = 16.sp,
                         fontFamily = FontFamily.SansSerif,
-                        color = MaterialTheme.colorScheme.onSecondary
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
                     ),
                     modifier = modifier.padding(start = 16.dp)
                 )
@@ -216,10 +216,10 @@ fun MoviesDetailPreview() {
     val ctx = LocalContext.current
     MoviesDetailScreen(
         navController = NavController(ctx),
-        title = "",
-        description = "",
+        title = "Holaksbkh",
+        description = "sfbsfbsfbsfb",
         imageUrl = "",
         posterImage = "",
-        releaseDate = ""
+        releaseDate = "dfbfbdfb"
     )
 }
