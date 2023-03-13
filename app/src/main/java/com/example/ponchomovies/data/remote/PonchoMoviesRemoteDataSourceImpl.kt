@@ -12,11 +12,10 @@ class PonchoMoviesRemoteDataSourceImpl @Inject constructor(
     private val ponchoMoviesApi: PonchoMoviesApi
 ) : IPonchoMoviesRemoteDataSource {
 
-    private var moviesResponse: PonchoMoviesEntity? = null
-
     override suspend fun getMoviesApi(
-        category: String?
-    ): PonchoMoviesEntity {
+        category: String?,
+        moviesResponse: (PonchoMoviesEntity?) -> Unit
+    ){
         when (category) {
             PonchoMoviesConstants.EP_MOVIE_POPULAR -> {
                 ponchoMoviesApi.getPonchoPopularMovies(KEY_MOVIE)
@@ -25,13 +24,11 @@ class PonchoMoviesRemoteDataSourceImpl @Inject constructor(
                             call: Call<MoviesResponse>,
                             response: Response<MoviesResponse>
                         ) {
-                           moviesResponse = response.body()?.toMoviesResponseEntity()
+                           moviesResponse(response.body()?.toMoviesResponseEntity())
                         }
-
                         override fun onFailure(call: Call<MoviesResponse>, t: Throwable) = Unit
                     })
             }
         }
-        return moviesResponse?: PonchoMoviesEntity()
     }
 }

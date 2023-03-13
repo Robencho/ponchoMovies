@@ -1,7 +1,5 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
-
 package com.example.ponchomovies.presentation.movies
-
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -49,13 +47,12 @@ import com.example.ponchomovies.framework.state.ScreenState
 fun MoviesScreen(navController: NavController, moviesViewModel: MoviesViewModel) {
 
     val movies: List<MovieResponse> by moviesViewModel.movie.observeAsState(initial = emptyList())
-    val status: ScreenState by moviesViewModel.status.observeAsState(initial = ScreenState.Empty)
+    val status: ScreenState by moviesViewModel.status.observeAsState(initial = ScreenState.Loading)
 
-    when(status){
-        is ScreenState.Empty, ScreenState.Loading -> {
+    when (status) {
+        is ScreenState.Loading -> {
             LoadingScreen()
-            if (movies.isEmpty())
-                moviesViewModel.getMovies(PonchoMoviesConstants.EP_MOVIE_POPULAR)
+            moviesViewModel.getMovies(PonchoMoviesConstants.EP_MOVIE_POPULAR)
         }
         is ScreenState.Success -> {
             Scaffold(
@@ -75,7 +72,10 @@ fun MoviesScreen(navController: NavController, moviesViewModel: MoviesViewModel)
                             .padding(start = 8.dp, end = 8.dp)
                     ) {
                         items(movies) { movieItem ->
-                            MoviesItemScreen(moviesEntity = movieItem, navController = navController)
+                            MoviesItemScreen(
+                                moviesEntity = movieItem,
+                                navController = navController
+                            )
                         }
                     }
                 }

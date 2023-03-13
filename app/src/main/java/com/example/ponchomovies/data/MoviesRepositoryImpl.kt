@@ -11,12 +11,17 @@ import javax.inject.Singleton
 class MoviesRepositoryImpl @Inject constructor(
     private val moviesRemoteDataSourceImpl: PonchoMoviesRemoteDataSourceImpl
 ) : IMoviesRepository {
-    override suspend fun getMovies(category: String?): ScreenState {
-        return withContext(Dispatchers.IO) {
+    override suspend fun getMovies(category: String?, response: (ScreenState) -> Unit) {
+        withContext(Dispatchers.IO) {
             try {
-               val response =  moviesRemoteDataSourceImpl.getMoviesApi(category)
-                ScreenState.Success(response.results)
-            }catch (e:Exception){
+                moviesRemoteDataSourceImpl.getMoviesApi(category) { moviesResponse ->
+                    moviesResponse?.results?.let { ScreenState.Success(it) }?.let {
+                        response(
+                            it
+                        )
+                    }
+                }
+            } catch (e: Exception) {
                 ScreenState.Error()
             }
         }
