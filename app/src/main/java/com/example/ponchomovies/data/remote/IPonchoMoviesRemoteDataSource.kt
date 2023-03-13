@@ -4,6 +4,7 @@ import com.example.ponchomovies.domain.models.PonchoMoviesEntity
 interface IPonchoMoviesRemoteDataSource {
 
     suspend fun getMoviesApi(
-        category:String?
-    ): PonchoMoviesEntity
+        category:String?,
+        moviesResponse: (PonchoMoviesEntity?) -> Unit
+    )
 }

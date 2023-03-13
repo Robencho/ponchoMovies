@@ -7,7 +7,9 @@ import javax.inject.Inject
 class GetMovieUseCase @Inject constructor(
     private val moviesRepositoryImpl: MoviesRepositoryImpl
 ) {
-    suspend operator fun invoke(parameters: String): ScreenState{
-        return moviesRepositoryImpl.getMovies(parameters)
+    suspend operator fun invoke(parameters: String, moviesResponse: (ScreenState)->Unit){
+        moviesRepositoryImpl.getMovies(parameters){
+            moviesResponse(it)
+        }
     }
 }
