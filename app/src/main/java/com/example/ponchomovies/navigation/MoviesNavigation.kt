@@ -16,15 +16,16 @@ sealed class MoviesNavigation(val route: String) {
     object MoviesHome : MoviesNavigation(route = "moviesHome")
     object MoviesList : MoviesNavigation(route = "moviesList")
     object MovieDetail :
-        MoviesNavigation(route = "movieDetail?title={title}&description={description}&imageUrl={imageUrl}&posterImage={posterImage}&releaseDate={releaseDate}") {
+        MoviesNavigation(route = "movieDetail?title={title}&description={description}&imageUrl={imageUrl}&posterImage={posterImage}&releaseDate={releaseDate}&id={id}") {
         fun createRoute(
             title: String,
             description: String,
-            imageUrl: String,
+            backGroundPath: String,
             posterImage: String,
-            releaseDate: String
+            releaseDate: String,
+            movieId:String
         ): String {
-            return "movieDetail?title=$title&description=$description&imageUrl=$imageUrl&posterImage=$posterImage&releaseDate=$releaseDate"
+            return "movieDetail?title=$title&description=$description&imageUrl=$backGroundPath&posterImage=$posterImage&releaseDate=$releaseDate&id=$movieId"
         }
     }
 }
@@ -55,16 +56,19 @@ fun MoviesNavigationHost(navController: NavHostController, viewModel: MoviesView
             }
         )) { navBackStackEntry ->
             val title = navBackStackEntry.arguments?.getString("title")
+            val movieId = navBackStackEntry.arguments?.getString("id")
             val description = navBackStackEntry.arguments?.getString("description")
             val imageUrl = navBackStackEntry.arguments?.getString("imageUrl")
             val posterImage = navBackStackEntry.arguments?.getString("posterImage")
             val releaseDate = navBackStackEntry.arguments?.getString("releaseDate")
             PonchoMoviesTheme(useDarkTheme = theme) {
                 MoviesDetailScreen(
+                    viewModel = viewModel,
                     navController = navController,
+                    movieId = movieId?: "",
                     title = title,
                     description = description,
-                    imageUrl = imageUrl,
+                    backgroundPath = imageUrl,
                     posterImage = posterImage,
                     releaseDate = releaseDate
                 )

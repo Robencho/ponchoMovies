@@ -10,6 +10,7 @@ data class MovieResponse(
     @PrimaryKey(autoGenerate = true) val movie_id:Int? = 0,
 
     @ColumnInfo(name = "adult")
+    @SerializedName("adult")
     val adult: Boolean = false,
     @ColumnInfo(name = "backdrop_path")
     @SerializedName("backdrop_path")

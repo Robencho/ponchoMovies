@@ -40,6 +40,7 @@ import com.example.ponchomovies.presentation.movies.viewmodel.MoviesViewModel
 import com.example.ponchomovies.ui.theme.PonchoMoviesTheme
 import com.example.ponchomovies.utils.PonchoMoviesConstants
 import com.example.ponchomovies.R.string
+import com.example.ponchomovies.R.drawable
 import com.example.ponchomovies.framework.state.ScreenState
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -119,7 +120,8 @@ fun MoviesItemScreen(moviesEntity: MovieResponse, navController: NavController) 
                                 moviesEntity.overview,
                                 moviesEntity.backdropPath,
                                 moviesEntity.posterPath,
-                                moviesEntity.releaseDate
+                                moviesEntity.releaseDate,
+                                moviesEntity.id.toString()
                             )
                         )
                     }
@@ -133,13 +135,14 @@ fun MoviesItemScreen(moviesEntity: MovieResponse, navController: NavController) 
                     AsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
                             .data("${PonchoMoviesConstants.URL_IMAGES}/${moviesEntity.posterPath}")
-                            .crossfade(3000)
+                            .crossfade(1000)
+                            .placeholder(drawableResId = drawable.avatar_place)
                             .build(),
                         contentDescription = "*",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clip(RoundedCornerShape(16.dp))
+                            .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
                     )
                     ProgressComponent(
                         modifier = Modifier
