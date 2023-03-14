@@ -9,6 +9,7 @@ class PonchoMoviesConstants {
 
         // categories
         const val EP_MOVIE_POPULAR = "3/movie/popular?"
+        const val EP_MOVIE_CAST = "3/movie/?"
         const val EP_MOVIE_LATEST = "3/movie/now_playing?"
         const val EP_MOVIE_TOP_RATED = "3/movie/top_rated?"
         const val EP_MOVIE_UPCOMING = "3/movie/upcoming?"

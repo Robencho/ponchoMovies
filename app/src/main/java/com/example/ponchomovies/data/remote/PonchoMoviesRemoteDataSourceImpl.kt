@@ -31,4 +31,20 @@ class PonchoMoviesRemoteDataSourceImpl @Inject constructor(
             }
         }
     }
+
+    override suspend fun getCast(
+        movieId: Int,
+        castResponseEntity: (CastResponseEntity?) -> Unit
+    ) {
+        ponchoMoviesApi.getCasting(movieId = movieId, userKey = KEY_MOVIE).enqueue(object : Callback<CastResponse>{
+            override fun onResponse(call: Call<CastResponse>, response: Response<CastResponse>) {
+                castResponseEntity(response.body()?.toCastResponseEntity())
+            }
+
+            override fun onFailure(call: Call<CastResponse>, t: Throwable) {
+                TODO("Not yet implemented")
+            }
+
+        })
+    }
 }

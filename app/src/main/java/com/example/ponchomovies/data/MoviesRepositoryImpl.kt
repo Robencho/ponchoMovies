@@ -1,6 +1,8 @@
 package com.example.ponchomovies.data
 
+import android.util.Log
 import com.example.ponchomovies.data.remote.PonchoMoviesRemoteDataSourceImpl
+import com.example.ponchomovies.domain.models.CastResponseEntity
 import com.example.ponchomovies.framework.state.ScreenState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -25,5 +27,14 @@ class MoviesRepositoryImpl @Inject constructor(
                 ScreenState.Error()
             }
         }
+    }
+
+    suspend fun getCast(movieId:String, castResponse: (CastResponseEntity?)->Unit){
+        withContext(Dispatchers.IO){
+            moviesRemoteDataSourceImpl.getCast(movieId.toInt()){
+                castResponse(it)
+            }
+        }
+
     }
 }
