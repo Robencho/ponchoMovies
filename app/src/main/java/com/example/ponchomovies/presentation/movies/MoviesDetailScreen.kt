@@ -3,13 +3,12 @@ package com.example.ponchomovies.presentation.movies
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.layout.LazyLayout
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -29,6 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -36,13 +36,10 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.example.ponchomovies.navigation.MoviesNavigation
 import com.example.ponchomovies.utils.PonchoMoviesConstants
 import com.example.ponchomovies.R.string
 import com.example.ponchomovies.R.drawable
 import com.example.ponchomovies.domain.models.CastModel
-import com.example.ponchomovies.domain.models.MovieResponse
-import com.example.ponchomovies.domain.usecase.GetCastUseCase
 import com.example.ponchomovies.presentation.common.ToolbarScreen
 import com.example.ponchomovies.presentation.movies.viewmodel.MoviesViewModel
 import com.example.ponchomovies.ui.theme.Shapes
@@ -67,7 +64,7 @@ fun MoviesDetailScreen(
         viewModel.getCast(movieId = movieId)
 
     Scaffold(
-        modifier = Modifier,
+        modifier = Modifier.background(MaterialTheme.colorScheme.primary),
         topBar = {
             ToolbarScreen(
                 onIconPressed = {
@@ -83,8 +80,6 @@ fun MoviesDetailScreen(
                     .background(MaterialTheme.colorScheme.primary)
             ) {
                 val (banner, casting, descriptionDetail, body) = createRefs()
-                val topGuide = createGuidelineFromTop(0.22f)
-
                 ContentBannerScreen(imageUrl = backgroundPath, modifier = Modifier.constrainAs(
                     banner
                 ) {
@@ -99,12 +94,11 @@ fun MoviesDetailScreen(
                     description = description,
                     modifier = Modifier
                         .constrainAs(descriptionDetail) {
-                            top.linkTo(topGuide)
+                            top.linkTo(parent.top)
                             start.linkTo(parent.start)
                             end.linkTo(parent.end)
-                            bottom.linkTo(parent.bottom)
                         }
-                        .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 16.dp),
+                        .padding(top = 180.dp, start = 16.dp, end = 16.dp, bottom = 16.dp),
                     navController = navController,
                     cast = cast
                 )
@@ -118,7 +112,7 @@ fun MoviesDetailScreen(
 fun ContentBannerScreen(imageUrl: String?, modifier: Modifier) {
     Column(modifier = modifier) {
         AsyncImage(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .height(220.dp)
                 .clip(
@@ -140,28 +134,142 @@ fun ContentBannerScreen(imageUrl: String?, modifier: Modifier) {
 }
 
 @Composable
-fun CasScreen(cast: List<CastModel>, modifier: Modifier) {
-    LazyRow(content = {
-        items(cast.filter { it.profile_path != null }) { itemCast ->
-            CastItemScreen(modifier = modifier, castItem = itemCast)
+fun ContentDescription(
+    description: String?, title: String?,
+    releaseDate: String?, modifier: Modifier, navController: NavController,
+    cast: List<CastModel>
+) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        shape = Shapes.extraLarge,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+        ),
+        elevation = CardDefaults.cardElevation(8.dp),
+        content = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+            ) {
+                Text(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .fillMaxWidth(),
+                    text = "$title",
+                    style = TextStyle(
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        fontFamily = FontFamily.Monospace
+                    ),
+                    textAlign = TextAlign.Center
+                )
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    text = releaseDate ?: "",
+                    style = TextStyle(
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        fontFamily = FontFamily.Monospace
+                    ),
+                    textAlign = TextAlign.Center
+                )
+                CasScreen(cast = cast, modifier = Modifier.fillMaxWidth())
+                Column(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 24.dp)) {
+                    Text(
+                        modifier = Modifier.padding(start = 8.dp),
+                        text = "Overview", style = TextStyle(
+                            fontWeight = FontWeight.Bold,
+                            fontFamily = FontFamily.Monospace,
+                            fontSize = 16.sp
+                        )
+                    )
+                    Text(
+                        text = description ?: "",
+                        style = TextStyle(
+                            fontSize = 18.sp,
+                            fontFamily = FontFamily.SansSerif,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                        ),
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .fillMaxWidth()
+                    )
+                    Button(
+                        onClick = {
+                            // Todo
+                        },
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(start = 16.dp, end = 16.dp, bottom = 50.dp)
+                    ) {
+                        Text(text = stringResource(id = string.btn_on_back))
+                    }
+                }
+
+            }
+
         }
-    })
+    )
+}
+
+@Composable
+fun CasScreen(cast: List<CastModel>, modifier: Modifier) {
+    Column(
+        modifier = Modifier
+            .padding(8.dp)
+            .fillMaxWidth()
+    ) {
+        Text(
+            text = "Character", style = TextStyle(
+                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily.Monospace,
+                fontSize = 16.sp
+            )
+        )
+    }
+    LazyRow(
+        content = {
+            items(cast.filter { it.profile_path != null }) { itemCast ->
+                CastItemScreen(modifier = modifier, castItem = itemCast)
+            }
+        })
 }
 
 @Composable
 fun CastItemScreen(modifier: Modifier, castItem: CastModel?) {
     Card(
-        modifier = modifier.height(200.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
-        ),
+        modifier = Modifier
+            .padding(8.dp)
+            .width(125.dp)
+            .height(200.dp),
         elevation = CardDefaults.cardElevation(12.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+        ),
         content = {
-            Column(modifier = modifier.padding(5.dp)) {
+            ConstraintLayout(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            ) {
+                val (photoProfile, nameProfile, character) = createRefs()
                 AsyncImage(
                     modifier = modifier
-                        .width(125.dp)
-                        .height(125.dp)
+                        .constrainAs(photoProfile) {
+                            top.linkTo(parent.top)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                            bottom.linkTo(nameProfile.top)
+                        }
+                        .size(110.dp)
+                        .fillMaxWidth()
                         .clip(CircleShape),
                     model = ImageRequest.Builder(LocalContext.current)
                         .data("${PonchoMoviesConstants.URL_IMAGES}/${castItem?.profile_path}")
@@ -172,6 +280,14 @@ fun CastItemScreen(modifier: Modifier, castItem: CastModel?) {
                     contentDescription = "*"
                 )
                 Text(
+                    modifier = Modifier
+                        .constrainAs(nameProfile) {
+                            top.linkTo(photoProfile.bottom)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                            bottom.linkTo(character.top)
+                        }
+                        .fillMaxWidth(),
                     text = castItem?.name ?: "Error",
                     style = TextStyle(
                         fontWeight = FontWeight.Bold,
@@ -179,6 +295,14 @@ fun CastItemScreen(modifier: Modifier, castItem: CastModel?) {
                     )
                 )
                 Text(
+                    modifier = Modifier
+                        .constrainAs(character) {
+                            top.linkTo(nameProfile.bottom)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                            bottom.linkTo(parent.bottom)
+                        }
+                        .fillMaxWidth(),
                     text = castItem?.character ?: "Error",
                     style = TextStyle(
                         fontWeight = FontWeight.ExtraLight,
@@ -190,87 +314,25 @@ fun CastItemScreen(modifier: Modifier, castItem: CastModel?) {
     )
 }
 
-@Composable
-fun ContentDescription(
-    description: String?, title: String?,
-    releaseDate: String?, modifier: Modifier, navController: NavController,
-    cast: List<CastModel>
-) {
-    Card(
-        modifier = modifier.padding(bottom = 50.dp),
-        shape = Shapes.extraLarge,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-        ),
-        elevation = CardDefaults.cardElevation(8.dp),
-        content = {
-            LazyColumn(
-                modifier = modifier
-            ) {
-                item {
-                    Column(modifier = modifier.fillMaxWidth(.5f)) {
-                        Text(
-                            modifier = modifier,
-                            text = "$title",
-                            style = TextStyle(
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onPrimaryContainer,
-                                fontFamily = FontFamily.Monospace
-                            )
-                        )
-                        Text(
-                            modifier = modifier,
-                            text = releaseDate ?: "",
-                            style = TextStyle(
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onPrimaryContainer,
-                                fontFamily = FontFamily.Monospace
-                            )
-                        )
-                    }
-
-                    CasScreen(cast = cast, modifier = modifier)
-
-                    Text(
-                        text = description ?: "",
-                        style = TextStyle(
-                            fontSize = 16.sp,
-                            fontFamily = FontFamily.SansSerif,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
-                        ),
-                        modifier = modifier.padding(start = 16.dp)
-                    )
-                    Button(
-                        onClick = {
-                            navController.navigate(MoviesNavigation.MoviesList.route)
-                        },
-                        modifier
-                            .fillMaxWidth()
-                            .padding(start = 16.dp, end = 16.dp)
-                    ) {
-                        Text(text = stringResource(id = string.btn_on_back))
-                    }
-                }
-            }
-        }
-    )
-}
-
 @Preview(showBackground = true)
 @Composable
 fun MoviesDetailPreview() {
     val ctx = LocalContext.current
-    //CastItemScreen(modifier = Modifier, castItem = CastModel())
+    /*CastItemScreen(
+        modifier = Modifier, castItem = CastModel(
+            name = "Roberto Llanos",
+            character = "Actor principal"
+        )
+    )*/
+    val viewmoDelMock = MoviesViewModel(null, null)
     MoviesDetailScreen(
-        MoviesViewModel(null, null),
+        viewmoDelMock,
         navController = NavController(ctx),
-        movieId = "",
-        title = "",
-        description = "",
-        backgroundPath = "",
-        posterImage = "",
-        releaseDate = ""
+        movieId = "55678",
+        title = "Mi primera vez",
+        description = "Movie description",
+        backgroundPath = "/7OwsFfoxNGIfWwSmdORyB7v8XNj.jpg",
+        posterImage = "/7OwsFfoxNGIfWwSmdORyB7v8XNj.jpg",
+        releaseDate = "20/89/89"
     )
 }
