@@ -1,5 +1,7 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.example.ponchomovies.presentation.movies
+
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -17,8 +19,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,16 +48,15 @@ import com.example.ponchomovies.framework.state.ScreenState
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MoviesScreen(navController: NavController, moviesViewModel: MoviesViewModel) {
-
-    val movies: List<MovieResponse> by moviesViewModel.movie.observeAsState(initial = emptyList())
-    val status: ScreenState by moviesViewModel.status.observeAsState(initial = ScreenState.Loading)
-
-    when (status) {
+    val uiState by moviesViewModel.uiState.collectAsState()
+    when (uiState) {
         is ScreenState.Loading -> {
             LoadingScreen()
             moviesViewModel.getMovies(PonchoMoviesConstants.EP_MOVIE_POPULAR)
         }
+
         is ScreenState.Success -> {
+            val moviesResponse = (uiState as ScreenState.Success).movies
             Scaffold(
                 modifier = Modifier,
                 topBar = {
@@ -72,7 +73,7 @@ fun MoviesScreen(navController: NavController, moviesViewModel: MoviesViewModel)
                             .background(MaterialTheme.colorScheme.primary)
                             .padding(start = 8.dp, end = 8.dp)
                     ) {
-                        items(movies) { movieItem ->
+                        items(items = moviesResponse) { movieItem ->
                             MoviesItemScreen(
                                 moviesEntity = movieItem,
                                 navController = navController
@@ -82,6 +83,11 @@ fun MoviesScreen(navController: NavController, moviesViewModel: MoviesViewModel)
                 }
             )
         }
+
+        is ScreenState.Error -> {
+            ShowError()
+        }
+
         else -> Unit
     }
 }
@@ -96,6 +102,17 @@ fun LoadingScreen() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         CircularProgressIndicator()
+    }
+}
+
+@Composable
+fun ShowError() {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(text = "Ocurrió un error inesperado.")
     }
 }
 
@@ -144,7 +161,7 @@ fun MoviesItemScreen(moviesEntity: MovieResponse, navController: NavController) 
                             .fillMaxWidth()
                             .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
                     )
-                    ProgressComponent(
+                    ProgressCountAverage(
                         modifier = Modifier
                             .align(Alignment.BottomStart)
                             .padding(8.dp),
@@ -175,7 +192,7 @@ fun MoviesItemScreen(moviesEntity: MovieResponse, navController: NavController) 
 }
 
 @Composable
-fun ProgressComponent(modifier: Modifier, percent: String) {
+fun ProgressCountAverage(modifier: Modifier, percent: String) {
     val percentOk = percent.toFloat()
     val new = percentOk / 10
     Box(

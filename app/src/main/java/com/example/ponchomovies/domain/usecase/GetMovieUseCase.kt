@@ -8,7 +8,7 @@ class GetMovieUseCase @Inject constructor(
     private val moviesRepositoryImpl: MoviesRepositoryImpl
 ) {
     suspend operator fun invoke(parameters: String, moviesResponse: (ScreenState)->Unit){
-        moviesRepositoryImpl.getMovies(parameters){
+        moviesRepositoryImpl.getMoviesWitFlow(parameters){
             moviesResponse(it)
         }
     }
