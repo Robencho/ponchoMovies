@@ -1,5 +1,7 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.example.ponchomovies.presentation.movies
+
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -17,8 +19,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,16 +48,15 @@ import com.example.ponchomovies.framework.state.ScreenState
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MoviesScreen(navController: NavController, moviesViewModel: MoviesViewModel) {
-
-    val movies: List<MovieResponse> by moviesViewModel.movie.observeAsState(initial = emptyList())
-    val status: ScreenState by moviesViewModel.status.observeAsState(initial = ScreenState.Loading)
-
-    when (status) {
+    val uiState by moviesViewModel.uiState.collectAsState()
+    when (uiState) {
         is ScreenState.Loading -> {
             LoadingScreen()
             moviesViewModel.getMovies(PonchoMoviesConstants.EP_MOVIE_POPULAR)
         }
+
         is ScreenState.Success -> {
+            val moviesResponse = (uiState as ScreenState.Success).movies
             Scaffold(
                 modifier = Modifier,
                 topBar = {
@@ -69,10 +70,10 @@ fun MoviesScreen(navController: NavController, moviesViewModel: MoviesViewModel)
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         modifier = Modifier
-                            .background(MaterialTheme.colorScheme.primary)
+                            .background(MaterialTheme.colorScheme.background)
                             .padding(start = 8.dp, end = 8.dp)
                     ) {
-                        items(movies) { movieItem ->
+                        items(items = moviesResponse) { movieItem ->
                             MoviesItemScreen(
                                 moviesEntity = movieItem,
                                 navController = navController
@@ -82,6 +83,11 @@ fun MoviesScreen(navController: NavController, moviesViewModel: MoviesViewModel)
                 }
             )
         }
+
+        is ScreenState.Error -> {
+            ShowError()
+        }
+
         else -> Unit
     }
 }
@@ -91,7 +97,7 @@ fun LoadingScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.onPrimaryContainer),
+            .background(MaterialTheme.colorScheme.surface),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -100,104 +106,13 @@ fun LoadingScreen() {
 }
 
 @Composable
-fun MoviesItemScreen(moviesEntity: MovieResponse, navController: NavController) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
-        ),
-        elevation = CardDefaults.cardElevation(12.dp),
-        shape = MaterialTheme.shapes.extraLarge,
-        content = {
-            Column(
-                modifier =
-                Modifier
-                    .clickable {
-                        navController.navigate(
-                            MoviesNavigation.MovieDetail.createRoute(
-                                moviesEntity.originalTitle,
-                                moviesEntity.overview,
-                                moviesEntity.backdropPath,
-                                moviesEntity.posterPath,
-                                moviesEntity.releaseDate,
-                                moviesEntity.id.toString()
-                            )
-                        )
-                    }
-                    .background(MaterialTheme.colorScheme.primaryContainer)
-                    .padding(bottom = 8.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    AsyncImage(
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data("${PonchoMoviesConstants.URL_IMAGES}/${moviesEntity.posterPath}")
-                            .crossfade(1000)
-                            .placeholder(drawableResId = drawable.avatar_place)
-                            .build(),
-                        contentDescription = "*",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
-                    )
-                    ProgressComponent(
-                        modifier = Modifier
-                            .align(Alignment.BottomStart)
-                            .padding(8.dp),
-                        moviesEntity.voteAverage.toString()
-                    )
-                }
-                Text(
-                    text = moviesEntity.title,
-                    style = TextStyle(
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        fontSize = 24.sp
-                    ),
-                    modifier = Modifier.padding(start = 16.dp)
-                )
-                Text(
-                    text = moviesEntity.releaseDate,
-                    style = TextStyle(
-                        fontWeight = FontWeight.Light,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        fontSize = 16.sp
-                    ),
-                    modifier = Modifier.padding(start = 16.dp)
-                )
-            }
-        }
-    )
-}
-
-@Composable
-fun ProgressComponent(modifier: Modifier, percent: String) {
-    val percentOk = percent.toFloat()
-    val new = percentOk / 10
-    Box(
-        modifier = modifier
-            .clip(CircleShape)
-            .size(50.dp)
-            .background(MaterialTheme.colorScheme.onBackground)
+fun ShowError() {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        CircularProgressIndicator(
-            modifier = Modifier.fillMaxSize(),
-            progress = new,
-            color = if (new < 0.7f) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary
-        )
-        Text(
-            text = "$percent",
-            modifier = Modifier.align(Alignment.Center),
-            style = TextStyle(
-                color = MaterialTheme.colorScheme.onPrimary,
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp
-            )
-        )
+        Text(text = "Ocurrió un error inesperado.")
     }
 }
 
@@ -206,9 +121,9 @@ fun ProgressComponent(modifier: Modifier, percent: String) {
 fun MoviesItemPreview() {
     val ctx = LocalContext.current
     PonchoMoviesTheme() {
-        MoviesItemScreen(
-            moviesEntity = MovieResponse(),
-            navController = NavController(ctx)
+        MoviesScreen(
+            navController = NavController(ctx),
+            moviesViewModel =  MoviesViewModel(null, null)
         )
     }
 }

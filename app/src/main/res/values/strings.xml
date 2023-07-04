@@ -12,5 +12,5 @@
     <string name="btn_home_go_to_movies">Go To Poncho Movies</string>
 
     <!-- Movies Detail Strings-->
-    <string name="btn_on_back">Back to Movies</string>
+    <string name="btn_on_back">Add to Favorites</string>
 </resources>

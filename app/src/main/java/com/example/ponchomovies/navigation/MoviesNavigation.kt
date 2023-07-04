@@ -23,7 +23,7 @@ sealed class MoviesNavigation(val route: String) {
             backGroundPath: String,
             posterImage: String,
             releaseDate: String,
-            movieId:String
+            movieId: String
         ): String {
             return "movieDetail?title=$title&description=$description&imageUrl=$backGroundPath&posterImage=$posterImage&releaseDate=$releaseDate&id=$movieId"
         }
@@ -31,19 +31,23 @@ sealed class MoviesNavigation(val route: String) {
 }
 
 @Composable
-fun MoviesNavigationHost(navController: NavHostController, viewModel: MoviesViewModel, theme:Boolean) {
+fun MoviesNavigationHost(
+    navController: NavHostController,
+    viewModel: MoviesViewModel,
+    isDarkTheme: Boolean
+) {
     val ctx = LocalContext.current
     NavHost(
         navController = navController,
         startDestination = MoviesNavigation.MoviesHome.route
     ) {
         composable(MoviesNavigation.MoviesHome.route) {
-            PonchoMoviesTheme(useDarkTheme = theme) {
-                HomeScreen(navController)
+            PonchoMoviesTheme(useDarkTheme = isDarkTheme) {
+                HomeScreen(navController, moviesViewModel = viewModel)
             }
         }
         composable(MoviesNavigation.MoviesList.route) {
-            PonchoMoviesTheme(useDarkTheme = theme) {
+            PonchoMoviesTheme(useDarkTheme = isDarkTheme) {
                 MoviesScreen(navController = navController, moviesViewModel = viewModel)
             }
         }
@@ -61,11 +65,11 @@ fun MoviesNavigationHost(navController: NavHostController, viewModel: MoviesView
             val imageUrl = navBackStackEntry.arguments?.getString("imageUrl")
             val posterImage = navBackStackEntry.arguments?.getString("posterImage")
             val releaseDate = navBackStackEntry.arguments?.getString("releaseDate")
-            PonchoMoviesTheme(useDarkTheme = theme) {
+            PonchoMoviesTheme(useDarkTheme = isDarkTheme) {
                 MoviesDetailScreen(
                     viewModel = viewModel,
                     navController = navController,
-                    movieId = movieId?: "",
+                    movieId = movieId ?: "",
                     title = title,
                     description = description,
                     backgroundPath = imageUrl,
