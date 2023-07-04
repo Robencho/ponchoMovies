@@ -15,10 +15,10 @@ class MainActivity : ComponentActivity() {
 
     /** Poncho movies by Rubio Llanos**/
     /**
-     Fuentes:
-        -> https://www.jetpackcompose.net/compose-layout-row-and-column
-        -> https://github.com/YassinAJDI/PopularMovies
-        -> Movies theme compose: https://material.io/blog/material-theme-builder
+    Fuentes:
+    -> https://www.jetpackcompose.net/compose-layout-row-and-column
+    -> https://github.com/YassinAJDI/PopularMovies
+    -> Movies theme compose: https://material.io/blog/material-theme-builder
      **/
 
 
@@ -28,7 +28,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             PonchoMoviesTheme {
                 val navController = rememberNavController()
-                MoviesNavigationHost(navController = navController, moviesViewModel, false)
+                MoviesNavigationHost(
+                    navController = navController,
+                    moviesViewModel,
+                    moviesViewModel.isDarkThemeEnabled.value
+                )
             }
         }
     }
