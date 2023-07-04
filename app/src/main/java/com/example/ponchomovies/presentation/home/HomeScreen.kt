@@ -41,7 +41,7 @@ fun HomeScreen(navController: NavController) {
     ConstraintLayout(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.onPrimaryContainer)
+            .background(MaterialTheme.colorScheme.primary)
     ) {
         val (head, description, homeBody) = createRefs()
         val topGuide = createGuidelineFromTop(0.1f)
@@ -79,7 +79,7 @@ fun TitleHomeHeadScreen(modifier: Modifier) {
             text = stringResource(id = string.title_home),
             style = TextStyle(
                 color = MaterialTheme.colorScheme.onPrimary,
-                fontFamily = FontFamily.Cursive,
+                fontFamily = FontFamily.Monospace,
                 fontSize = 18.sp
             )
         )
@@ -92,7 +92,7 @@ fun HomeContentDescriptionScreen(modifier: Modifier) {
         modifier = modifier.padding(16.dp),
         shape = Shapes.extraLarge,
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.onSecondaryContainer
+            containerColor = MaterialTheme.colorScheme.secondary
         ),
         elevation = CardDefaults.cardElevation(8.dp),
         content = {
@@ -102,7 +102,7 @@ fun HomeContentDescriptionScreen(modifier: Modifier) {
                         .weight(0.5f)
                         .width(170.dp)
                         .height(200.dp),
-                    painter = painterResource(id = drawable.photo_profile),
+                    painter = painterResource(id = drawable.kotlin),
                     contentDescription = "",
                     contentScale = ContentScale.Crop,
                 )
@@ -110,7 +110,7 @@ fun HomeContentDescriptionScreen(modifier: Modifier) {
                     stringResource(id = string.home_description),
                     style = TextStyle(
                         color = MaterialTheme.colorScheme.onSecondary,
-                        fontFamily = FontFamily.Cursive
+                        fontFamily = FontFamily.Monospace
                     ),
                     modifier = modifier
                         .weight(0.3f)
@@ -131,8 +131,8 @@ fun HomeBody(modifier: Modifier, navController: NavController) {
         Button(
             modifier = modifier,
             colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
+                containerColor = MaterialTheme.colorScheme.secondary,
+                contentColor = MaterialTheme.colorScheme.onSecondary
             ),
             onClick = {
                 navController.navigate(MoviesNavigation.MoviesList.route)

@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -64,7 +65,7 @@ fun MoviesDetailScreen(
         viewModel.getCast(movieId = movieId)
 
     Scaffold(
-        modifier = Modifier.background(MaterialTheme.colorScheme.primary),
+        modifier = Modifier.background(MaterialTheme.colorScheme.background),
         topBar = {
             ToolbarScreen(
                 onIconPressed = {
@@ -77,7 +78,7 @@ fun MoviesDetailScreen(
             ConstraintLayout(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.primary)
+                    .background(MaterialTheme.colorScheme.background)
             ) {
                 val (banner, casting, descriptionDetail, body) = createRefs()
                 ContentBannerScreen(imageUrl = backgroundPath, modifier = Modifier.constrainAs(
@@ -143,7 +144,7 @@ fun ContentDescription(
         modifier = modifier.fillMaxWidth(),
         shape = Shapes.extraLarge,
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            containerColor = MaterialTheme.colorScheme.surface,
         ),
         elevation = CardDefaults.cardElevation(8.dp),
         content = {
@@ -160,7 +161,7 @@ fun ContentDescription(
                     style = TextStyle(
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        color = MaterialTheme.colorScheme.onSurface,
                         fontFamily = FontFamily.Monospace
                     ),
                     textAlign = TextAlign.Center
@@ -173,15 +174,17 @@ fun ContentDescription(
                     style = TextStyle(
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        color = MaterialTheme.colorScheme.onSurface,
                         fontFamily = FontFamily.Monospace
                     ),
                     textAlign = TextAlign.Center
                 )
                 CasScreen(cast = cast, modifier = Modifier.fillMaxWidth())
-                Column(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 24.dp)) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 24.dp)
+                ) {
                     Text(
                         modifier = Modifier.padding(start = 8.dp),
                         text = "Overview", style = TextStyle(
@@ -195,7 +198,7 @@ fun ContentDescription(
                         style = TextStyle(
                             fontSize = 18.sp,
                             fontFamily = FontFamily.SansSerif,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                            color = MaterialTheme.colorScheme.onSurface
                         ),
                         modifier = Modifier
                             .padding(16.dp)
@@ -206,8 +209,12 @@ fun ContentDescription(
                             // Todo
                         },
                         Modifier
-                            .fillMaxWidth()
                             .padding(start = 16.dp, end = 16.dp, bottom = 50.dp)
+                            .fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = MaterialTheme.colorScheme.onSecondary
+                        )
                     ) {
                         Text(text = stringResource(id = string.btn_on_back))
                     }
@@ -251,7 +258,7 @@ fun CastItemScreen(modifier: Modifier, castItem: CastModel?) {
             .height(200.dp),
         elevation = CardDefaults.cardElevation(12.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            containerColor = MaterialTheme.colorScheme.surface,
         ),
         content = {
             ConstraintLayout(
@@ -291,7 +298,7 @@ fun CastItemScreen(modifier: Modifier, castItem: CastModel?) {
                     text = castItem?.name ?: "Error",
                     style = TextStyle(
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 )
                 Text(
@@ -306,7 +313,7 @@ fun CastItemScreen(modifier: Modifier, castItem: CastModel?) {
                     text = castItem?.character ?: "Error",
                     style = TextStyle(
                         fontWeight = FontWeight.ExtraLight,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 )
             }
@@ -318,15 +325,9 @@ fun CastItemScreen(modifier: Modifier, castItem: CastModel?) {
 @Composable
 fun MoviesDetailPreview() {
     val ctx = LocalContext.current
-    /*CastItemScreen(
-        modifier = Modifier, castItem = CastModel(
-            name = "Roberto Llanos",
-            character = "Actor principal"
-        )
-    )*/
-    val viewmoDelMock = MoviesViewModel(null, null)
+    val viewMoDelMock = MoviesViewModel(null, null)
     MoviesDetailScreen(
-        viewmoDelMock,
+        viewMoDelMock,
         navController = NavController(ctx),
         movieId = "55678",
         title = "Mi primera vez",
