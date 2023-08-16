@@ -9,7 +9,8 @@ import retrofit2.http.Query
 
 interface PonchoMoviesApi {
     @GET(PonchoMoviesConstants.EP_MOVIE_POPULAR)
-    fun getPonchoPopularMovies(@Query("api_key")userKey:String): retrofit2.Call<MoviesResponse>
+    suspend fun getPonchoPopularMovies(@Query("api_key") userKey: String): MoviesResponse
+
     @GET("3/movie/{movie_id}/credits")
-    fun getCasting(@Path("movie_id")movieId:Int, @Query("api_key")userKey: String): retrofit2.Call<CastResponse>
+    suspend fun getCasting(@Path("movie_id") movieId: Int, @Query("api_key") userKey: String): CastResponse
 }

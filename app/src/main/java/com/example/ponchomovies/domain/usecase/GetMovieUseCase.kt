@@ -7,9 +7,11 @@ import javax.inject.Inject
 class GetMovieUseCase @Inject constructor(
     private val moviesRepositoryImpl: MoviesRepositoryImpl
 ) {
-    suspend operator fun invoke(parameters: String, moviesResponse: (ScreenState)->Unit){
-        moviesRepositoryImpl.getMoviesWitFlow(parameters){
-            moviesResponse(it)
+    suspend operator fun invoke(parameters: String, moviesResponse: (ScreenState) -> Unit) {
+        moviesRepositoryImpl.getMoviesWithCoroutines {
+            moviesResponse(
+                it
+            )
         }
     }
 }
