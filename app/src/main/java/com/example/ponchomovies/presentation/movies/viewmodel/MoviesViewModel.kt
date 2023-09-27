@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.ponchomovies.domain.models.CastModel
+import com.example.ponchomovies.data.models.CastItemDto
 import com.example.ponchomovies.domain.usecase.GetCastUseCase
 import com.example.ponchomovies.domain.usecase.GetMovieUseCase
 import com.example.ponchomovies.framework.state.ScreenState
@@ -14,6 +14,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
+import java.time.Duration
 import javax.inject.Inject
 
 @HiltViewModel
@@ -28,21 +30,26 @@ class MoviesViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<ScreenState>(ScreenState.Loading)
     val uiState: StateFlow<ScreenState> = _uiState
 
-    private val _cast = MutableLiveData<List<CastModel>>()
-    val cast: LiveData<List<CastModel>> = _cast
+    private val _cast = MutableLiveData<List<CastItemDto>>()
+    val cast: LiveData<List<CastItemDto>> = _cast
 
     fun getMovies(keyMovies: String?) {
         _uiState.value = ScreenState.Loading
         keyMovies?.let { key ->
             viewModelScope.launch {
-                movieUseCase?.let {
-                    it(key) { moviesResponse ->
-                        _uiState.value = moviesResponse
+                try {
+                    movieUseCase?.let {
+                        it(key) { moviesResponse ->
+                            _uiState.value = moviesResponse
+                        }
                     }
+                } catch (exception: Exception) {
+                    _uiState.value = ScreenState.Error("Ups algo falló!!!")
                 }
             }
         }
     }
+
     fun getCast(movieId: String) {
         viewModelScope.launch {
             getCastUseCase?.let {
@@ -53,6 +60,7 @@ class MoviesViewModel @Inject constructor(
             }
         }
     }
+
     fun setTheme(isDarkTheme: Boolean) {
         isDarkThemeEnabled.value = isDarkTheme
     }

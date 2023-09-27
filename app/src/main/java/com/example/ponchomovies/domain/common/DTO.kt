@@ -20,7 +20,7 @@ abstract class DTO {
         }
     }
 
-    fun mapToDomain(mapper: (DTO) -> Entity, fromClass: DTO): Entity?{
+    private fun mapToDomain(mapper: (DTO) -> Entity, fromClass: DTO): Entity?{
         return try {
             mapper(fromClass)
         }catch (exception: Exception){
