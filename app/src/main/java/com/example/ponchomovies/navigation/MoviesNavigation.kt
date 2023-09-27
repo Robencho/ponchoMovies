@@ -7,13 +7,16 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.ponchomovies.presentation.home.HomeScreen
+import com.example.ponchomovies.presentation.home.MoviesHomeScreen
 import com.example.ponchomovies.presentation.movies.MoviesDetailScreen
 import com.example.ponchomovies.presentation.movies.MoviesScreen
 import com.example.ponchomovies.presentation.movies.viewmodel.MoviesViewModel
+import com.example.ponchomovies.presentation.settings.MoviesSettingsScreen
 import com.example.ponchomovies.ui.theme.PonchoMoviesTheme
 
 sealed class MoviesNavigation(val route: String) {
     object MoviesHome : MoviesNavigation(route = "moviesHome")
+    object MoviesSettings : MoviesNavigation(route = "moviesSettings")
     object MoviesList : MoviesNavigation(route = "moviesList")
     object MovieDetail :
         MoviesNavigation(route = "movieDetail?title={title}&description={description}&imageUrl={imageUrl}&posterImage={posterImage}&releaseDate={releaseDate}&id={id}") {
@@ -43,12 +46,18 @@ fun MoviesNavigationHost(
     ) {
         composable(MoviesNavigation.MoviesHome.route) {
             PonchoMoviesTheme(useDarkTheme = isDarkTheme) {
-                HomeScreen(navController, moviesViewModel = viewModel)
+                MoviesHomeScreen(navController, moviesViewModel = viewModel)
             }
         }
         composable(MoviesNavigation.MoviesList.route) {
             PonchoMoviesTheme(useDarkTheme = isDarkTheme) {
                 MoviesScreen(navController = navController, moviesViewModel = viewModel)
+            }
+        }
+
+        composable(MoviesNavigation.MoviesSettings.route) {
+            PonchoMoviesTheme(useDarkTheme = isDarkTheme) {
+                MoviesSettingsScreen(navController = navController, moviesViewModel = viewModel)
             }
         }
         composable(route = MoviesNavigation.MovieDetail.route, arguments = listOf(

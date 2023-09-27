@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
+import com.example.ponchomovies.R
 import com.example.ponchomovies.navigation.MoviesNavigation
 import com.example.ponchomovies.ui.theme.PonchoMoviesTheme
 import com.example.ponchomovies.ui.theme.Shapes
@@ -61,7 +62,7 @@ fun HomeScreen(
     ConstraintLayout(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(MaterialTheme.colorScheme.surface)
     ) {
         val (switch, head, description, homeBody) = createRefs()
         val topGuide = createGuidelineFromTop(0.1f)
@@ -73,6 +74,7 @@ fun HomeScreen(
                     switch
                 ) {
                     top.linkTo(parent.top)
+                    start.linkTo(parent.start)
                     end.linkTo(parent.end)
                 }
                 .padding(end = 17.dp),
@@ -110,41 +112,49 @@ private fun EnabledDarkTheme(
     checkedListener: Boolean,
     moviesViewModel: MoviesViewModel
 ) {
-    Switch(
-        modifier = modifier,
-        checked = checkedListener,
-        onCheckedChange = {
-            moviesViewModel.setTheme(!checkedListener)
-        },
-        thumbContent = {
-            Icon(
-                modifier = Modifier.size(SwitchDefaults.IconSize),
-                imageVector = if (checkedListener) Icons.Rounded.Build else Icons.Rounded.CheckCircle,
-                contentDescription = "Switch Icon"
-            )
+    ConstraintLayout(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+    ) {
+        val (enableDarkThemeText, enableDarkThemeSwitch) = createRefs()
 
-        },
-        colors = SwitchDefaults.colors(
-            checkedTrackColor = MaterialTheme.colorScheme.tertiary,
-            checkedThumbColor = MaterialTheme.colorScheme.onTertiary,
-            uncheckedThumbColor = MaterialTheme.colorScheme.primary,
-            uncheckedTrackColor = MaterialTheme.colorScheme.onPrimary
-        ),
-    )
-}
-
-@Composable
-fun TitleHomeHeadScreen(modifier: Modifier) {
-    Column(modifier = modifier) {
         Text(
-            text = stringResource(id = string.title_home),
-            style = TextStyle(
-                color = MaterialTheme.colorScheme.onBackground,
-                fontFamily = FontFamily.Monospace,
-                fontSize = 18.sp
-            )
+            text = stringResource(id = string.enabled_dark_theme_text),
+            modifier = Modifier.constrainAs(enableDarkThemeText) {
+                top.linkTo(parent.top)
+                start.linkTo(parent.start)
+                end.linkTo(enableDarkThemeSwitch.start)
+                bottom.linkTo(enableDarkThemeSwitch.bottom)
+            })
+
+        Switch(
+            modifier = Modifier.constrainAs(enableDarkThemeSwitch){
+                top.linkTo(parent.top)
+                start.linkTo(enableDarkThemeText.end)
+                end.linkTo(parent.end)
+            },
+            checked = checkedListener,
+            onCheckedChange = {
+                moviesViewModel.setTheme(!checkedListener)
+            },
+            thumbContent = {
+                Icon(
+                    modifier = Modifier.size(SwitchDefaults.IconSize),
+                    imageVector = if (checkedListener) Icons.Rounded.Build else Icons.Rounded.CheckCircle,
+                    contentDescription = "Switch Icon"
+                )
+
+            },
+            colors = SwitchDefaults.colors(
+                checkedTrackColor = MaterialTheme.colorScheme.tertiary,
+                checkedThumbColor = MaterialTheme.colorScheme.onTertiary,
+                uncheckedThumbColor = MaterialTheme.colorScheme.primary,
+                uncheckedTrackColor = MaterialTheme.colorScheme.onPrimary
+            ),
         )
     }
+
 }
 
 @Composable

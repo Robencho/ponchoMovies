@@ -40,8 +40,9 @@ import coil.request.ImageRequest
 import com.example.ponchomovies.utils.PonchoMoviesConstants
 import com.example.ponchomovies.R.string
 import com.example.ponchomovies.R.drawable
-import com.example.ponchomovies.domain.models.CastModel
+import com.example.ponchomovies.data.models.CastItemDto
 import com.example.ponchomovies.presentation.common.ToolbarScreen
+import com.example.ponchomovies.presentation.common.menu.BottomNavigation
 import com.example.ponchomovies.presentation.movies.viewmodel.MoviesViewModel
 import com.example.ponchomovies.ui.theme.Shapes
 
@@ -59,7 +60,7 @@ fun MoviesDetailScreen(
     releaseDate: String?
 ) {
 
-    val cast: List<CastModel> by viewModel.cast.observeAsState(initial = emptyList())
+    val cast: List<CastItemDto> by viewModel.cast.observeAsState(initial = emptyList())
 
     if (cast.isEmpty())
         viewModel.getCast(movieId = movieId)
@@ -98,12 +99,16 @@ fun MoviesDetailScreen(
                             top.linkTo(parent.top)
                             start.linkTo(parent.start)
                             end.linkTo(parent.end)
+                            bottom.linkTo(parent.bottom)
                         }
-                        .padding(top = 180.dp, start = 16.dp, end = 16.dp, bottom = 16.dp),
+                        .padding(top = 180.dp, start = 16.dp, end = 16.dp, bottom = 90.dp),
                     navController = navController,
                     cast = cast
                 )
             }
+        },
+        bottomBar = {
+            BottomNavigation(navController = navController)
         }
     )
 
@@ -138,7 +143,7 @@ fun ContentBannerScreen(imageUrl: String?, modifier: Modifier) {
 fun ContentDescription(
     description: String?, title: String?,
     releaseDate: String?, modifier: Modifier, navController: NavController,
-    cast: List<CastModel>
+    cast: List<CastItemDto>
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -227,7 +232,7 @@ fun ContentDescription(
 }
 
 @Composable
-fun CasScreen(cast: List<CastModel>, modifier: Modifier) {
+fun CasScreen(cast: List<CastItemDto>, modifier: Modifier) {
     Column(
         modifier = Modifier
             .padding(8.dp)
@@ -250,7 +255,7 @@ fun CasScreen(cast: List<CastModel>, modifier: Modifier) {
 }
 
 @Composable
-fun CastItemScreen(modifier: Modifier, castItem: CastModel?) {
+fun CastItemScreen(modifier: Modifier, castItem: CastItemDto?) {
     Card(
         modifier = Modifier
             .padding(8.dp)

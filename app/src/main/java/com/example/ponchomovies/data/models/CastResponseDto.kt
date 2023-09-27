@@ -1,11 +1,13 @@
-package com.example.ponchomovies.domain.models
+package com.example.ponchomovies.data.models
 
-data class CastResponse(
+import com.example.ponchomovies.domain.models.CastResponseEntity
+
+data class CastResponseDto(
     val id: Int,
-    val cast: List<CastModel>
+    val cast: List<CastItemDto>
 )
 
-data class CastModel(
+data class CastItemDto(
     val adult: Boolean = false,
     val gender: Int = 0,
     val id: Int = 0,
@@ -20,7 +22,7 @@ data class CastModel(
     val order: Int = 0
 )
 
-fun CastResponse.toCastResponseEntity() = CastResponseEntity(
+fun CastResponseDto.toCastResponseEntity() = CastResponseEntity(
      id,
      cast
 )
