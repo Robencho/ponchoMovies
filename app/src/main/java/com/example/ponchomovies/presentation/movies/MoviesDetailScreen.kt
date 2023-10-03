@@ -9,18 +9,18 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Text
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -37,22 +37,21 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.example.ponchomovies.utils.PonchoMoviesConstants
-import com.example.ponchomovies.R.string
 import com.example.ponchomovies.R.drawable
-import com.example.ponchomovies.data.models.CastItemDto
+import com.example.ponchomovies.R.string
+import com.example.ponchomovies.domain.model.Cast
 import com.example.ponchomovies.presentation.common.ToolbarScreen
 import com.example.ponchomovies.presentation.common.menu.BottomNavigation
 import com.example.ponchomovies.presentation.movies.viewmodel.MoviesViewModel
 import com.example.ponchomovies.ui.theme.Shapes
+import com.example.ponchomovies.utils.PonchoMoviesConstants
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MoviesDetailScreen(
     viewModel: MoviesViewModel,
     navController: NavController,
-    movieId: String,
+    movieId: Int,
     title: String?,
     description: String?,
     backgroundPath: String?,
@@ -60,10 +59,8 @@ fun MoviesDetailScreen(
     releaseDate: String?
 ) {
 
-    val cast: List<CastItemDto> by viewModel.cast.observeAsState(initial = emptyList())
-
-    if (cast.isEmpty())
-        viewModel.getCast(movieId = movieId)
+    val cast: List<Cast> by viewModel.cast.observeAsState(initial = emptyList())
+    viewModel.getCast(movieId = movieId)
 
     Scaffold(
         modifier = Modifier.background(MaterialTheme.colorScheme.background),
@@ -99,8 +96,8 @@ fun MoviesDetailScreen(
                             top.linkTo(parent.top)
                             start.linkTo(parent.start)
                             end.linkTo(parent.end)
-                            bottom.linkTo(parent.bottom)
                         }
+                        .alpha(0.8f)
                         .padding(top = 180.dp, start = 16.dp, end = 16.dp, bottom = 90.dp),
                     navController = navController,
                     cast = cast
@@ -123,7 +120,7 @@ fun ContentBannerScreen(imageUrl: String?, modifier: Modifier) {
                 .height(220.dp)
                 .clip(
                     RoundedCornerShape(
-                        bottomStart = 24.dp, bottomEnd = 24.dp
+                        topStart = 70.dp, topEnd = 70.dp
                     )
                 ),
             model = ImageRequest.Builder(LocalContext.current)
@@ -143,7 +140,7 @@ fun ContentBannerScreen(imageUrl: String?, modifier: Modifier) {
 fun ContentDescription(
     description: String?, title: String?,
     releaseDate: String?, modifier: Modifier, navController: NavController,
-    cast: List<CastItemDto>
+    cast: List<Cast>
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -192,7 +189,8 @@ fun ContentDescription(
                 ) {
                     Text(
                         modifier = Modifier.padding(start = 8.dp),
-                        text = "Overview", style = TextStyle(
+                        text = "Resumen",
+                        style = TextStyle(
                             fontWeight = FontWeight.Bold,
                             fontFamily = FontFamily.Monospace,
                             fontSize = 16.sp
@@ -232,14 +230,14 @@ fun ContentDescription(
 }
 
 @Composable
-fun CasScreen(cast: List<CastItemDto>, modifier: Modifier) {
+fun CasScreen(cast: List<Cast>, modifier: Modifier) {
     Column(
         modifier = Modifier
             .padding(8.dp)
             .fillMaxWidth()
     ) {
         Text(
-            text = "Character", style = TextStyle(
+            text = "Reparto", style = TextStyle(
                 fontWeight = FontWeight.Bold,
                 fontFamily = FontFamily.Monospace,
                 fontSize = 16.sp
@@ -255,7 +253,7 @@ fun CasScreen(cast: List<CastItemDto>, modifier: Modifier) {
 }
 
 @Composable
-fun CastItemScreen(modifier: Modifier, castItem: CastItemDto?) {
+fun CastItemScreen(modifier: Modifier, castItem: Cast?) {
     Card(
         modifier = Modifier
             .padding(8.dp)
@@ -326,6 +324,7 @@ fun CastItemScreen(modifier: Modifier, castItem: CastItemDto?) {
     )
 }
 
+
 @Preview(showBackground = true)
 @Composable
 fun MoviesDetailPreview() {
@@ -334,7 +333,7 @@ fun MoviesDetailPreview() {
     MoviesDetailScreen(
         viewMoDelMock,
         navController = NavController(ctx),
-        movieId = "55678",
+        movieId = 55678,
         title = "Mi primera vez",
         description = "Movie description",
         backgroundPath = "/7OwsFfoxNGIfWwSmdORyB7v8XNj.jpg",

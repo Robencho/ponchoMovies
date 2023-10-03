@@ -6,7 +6,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.ponchomovies.presentation.home.HomeScreen
 import com.example.ponchomovies.presentation.home.MoviesHomeScreen
 import com.example.ponchomovies.presentation.movies.MoviesDetailScreen
 import com.example.ponchomovies.presentation.movies.MoviesScreen
@@ -78,7 +77,7 @@ fun MoviesNavigationHost(
                 MoviesDetailScreen(
                     viewModel = viewModel,
                     navController = navController,
-                    movieId = movieId ?: "",
+                    movieId = movieId?.toInt() ?: 0,
                     title = title,
                     description = description,
                     backgroundPath = imageUrl,
