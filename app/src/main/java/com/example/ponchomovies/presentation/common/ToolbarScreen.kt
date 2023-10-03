@@ -1,8 +1,10 @@
 package com.example.ponchomovies.presentation.common
 
+import androidx.compose.foundation.background
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.ponchomovies.R
@@ -18,10 +20,11 @@ fun ToolbarScreen(
         title = {
             Text(
                 text = title,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onPrimaryContainer
             )
         },
-        modifier = Modifier,
+        modifier = Modifier.background(MaterialTheme.colorScheme.primaryContainer)
+            .alpha(0.8f),
         navigationIcon = {
             IconButton(
                 onClick = { onIconPressed() },
@@ -34,7 +37,7 @@ fun ToolbarScreen(
                 })
         },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.6f)
+            containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f)
         )
     )
 }

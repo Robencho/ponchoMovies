@@ -32,7 +32,6 @@ import com.example.ponchomovies.presentation.movies.viewmodel.MoviesViewModel
 import com.example.ponchomovies.ui.theme.PonchoMoviesTheme
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MoviesSettingsScreen(
     navController: NavController,
@@ -116,6 +115,7 @@ private fun EnabledDarkTheme(
     }
 }
 
+/*
 @Composable
 @Preview(showBackground = true)
 fun MoviesSettingsScreenPreview() {
@@ -123,4 +123,4 @@ fun MoviesSettingsScreenPreview() {
     PonchoMoviesTheme() {
         MoviesSettingsScreen(navController = NavController(ctx), MoviesViewModel(null, null))
     }
-}
+}*/

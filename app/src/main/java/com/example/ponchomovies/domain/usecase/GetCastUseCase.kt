@@ -1,15 +1,13 @@
 package com.example.ponchomovies.domain.usecase
 
-import com.example.ponchomovies.data.MoviesRepositoryImpl
-import com.example.ponchomovies.domain.models.CastResponseEntity
+import com.example.ponchomovies.core.generic.useCase.BaseUseCase
+import com.example.ponchomovies.domain.model.Cast
+import com.example.ponchomovies.domain.repository.MovieRepository
 import javax.inject.Inject
 
 class GetCastUseCase @Inject constructor(
-    private val moviesRepositoryImpl: MoviesRepositoryImpl
-) {
-    suspend operator fun invoke(movieId: String, responseEntity: (CastResponseEntity?) -> Unit) {
-        moviesRepositoryImpl.getCast(movieId) {
-            responseEntity(it)
-        }
-    }
+    private val repository: MovieRepository
+) : BaseUseCase<Int, List<Cast>> {
+    override suspend fun execute(movieId: Int): List<Cast> =
+        repository.getCast(movieId = movieId)
 }

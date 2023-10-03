@@ -25,21 +25,18 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.ponchomovies.R
-import com.example.ponchomovies.data.models.MovieItemDto
-import com.example.ponchomovies.domain.models.MovieItemEntity
+import com.example.ponchomovies.domain.model.Movie
 import com.example.ponchomovies.navigation.MoviesNavigation
-import com.example.ponchomovies.ui.theme.PonchoMoviesTheme
 import com.example.ponchomovies.utils.PonchoMoviesConstants
 
 @Composable
-fun MoviesItemScreen(moviesEntity: MovieItemEntity, navController: NavController) {
+fun MoviesItemScreen(moviesEntity: Movie, navController: NavController) {
     Card(
         modifier = Modifier
             .fillMaxWidth(),
@@ -140,6 +137,7 @@ fun ProgressCountAverage(modifier: Modifier, percent: String) {
         )
     }
 }
+/*
 
 @Preview(showBackground = true)
 @Composable
@@ -147,10 +145,10 @@ private fun PreviewMoviesItem() {
     val ctx = LocalContext.current
     PonchoMoviesTheme(false) {
         MoviesItemScreen(
-            moviesEntity = MovieItemEntity(
+            moviesEntity = Movie(
                 voteAverage = 9.0f
             ),
             navController = NavController(ctx)
         )
     }
-}
+}*/
