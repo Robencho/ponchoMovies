@@ -24,6 +24,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -40,8 +41,10 @@ import coil.request.ImageRequest
 import com.example.ponchomovies.R.drawable
 import com.example.ponchomovies.R.string
 import com.example.ponchomovies.domain.model.Cast
+import com.example.ponchomovies.domain.model.Video
 import com.example.ponchomovies.presentation.common.ToolbarScreen
 import com.example.ponchomovies.presentation.common.menu.BottomNavigation
+import com.example.ponchomovies.presentation.common.youtube.YoutubeScreen
 import com.example.ponchomovies.presentation.movies.viewmodel.MoviesViewModel
 import com.example.ponchomovies.ui.theme.Shapes
 import com.example.ponchomovies.utils.PonchoMoviesConstants
@@ -61,7 +64,7 @@ fun MoviesDetailScreen(
 
     val cast: List<Cast> by viewModel.cast.observeAsState(initial = emptyList())
     viewModel.getCast(movieId = movieId)
-
+    viewModel.getVideos(movieId = movieId)
     Scaffold(
         modifier = Modifier.background(MaterialTheme.colorScheme.background),
         topBar = {
@@ -69,7 +72,7 @@ fun MoviesDetailScreen(
                 onIconPressed = {
                     navController.popBackStack()
                 },
-                title = title ?: "Holi"
+                title = title ?: ""
             )
         },
         content = {
@@ -100,7 +103,8 @@ fun MoviesDetailScreen(
                         .alpha(0.8f)
                         .padding(top = 180.dp, start = 16.dp, end = 16.dp, bottom = 90.dp),
                     navController = navController,
-                    cast = cast
+                    cast = cast,
+                    viewModel = viewModel
                 )
             }
         },
@@ -140,7 +144,8 @@ fun ContentBannerScreen(imageUrl: String?, modifier: Modifier) {
 fun ContentDescription(
     description: String?, title: String?,
     releaseDate: String?, modifier: Modifier, navController: NavController,
-    cast: List<Cast>
+    cast: List<Cast>,
+    viewModel: MoviesViewModel
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -172,7 +177,7 @@ fun ContentDescription(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp),
-                    text = releaseDate ?: "",
+                    text = releaseDate.orEmpty(),
                     style = TextStyle(
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
@@ -181,7 +186,11 @@ fun ContentDescription(
                     ),
                     textAlign = TextAlign.Center
                 )
-                CasScreen(cast = cast, modifier = Modifier.fillMaxWidth())
+                CasScreen(
+                    cast = cast,
+                    modifier = Modifier.fillMaxWidth(),
+                    videos = viewModel.trailers.observeAsState().value ?: emptyList()
+                )
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -189,7 +198,7 @@ fun ContentDescription(
                 ) {
                     Text(
                         modifier = Modifier.padding(start = 8.dp),
-                        text = "Resumen",
+                        text = stringResource(id = string.overview_detail),
                         style = TextStyle(
                             fontWeight = FontWeight.Bold,
                             fontFamily = FontFamily.Monospace,
@@ -230,14 +239,14 @@ fun ContentDescription(
 }
 
 @Composable
-fun CasScreen(cast: List<Cast>, modifier: Modifier) {
+fun CasScreen(cast: List<Cast>, modifier: Modifier, videos: List<Video>) {
     Column(
         modifier = Modifier
             .padding(8.dp)
             .fillMaxWidth()
     ) {
         Text(
-            text = "Reparto", style = TextStyle(
+            text = stringResource(id = string.text_cast), style = TextStyle(
                 fontWeight = FontWeight.Bold,
                 fontFamily = FontFamily.Monospace,
                 fontSize = 16.sp
@@ -246,10 +255,22 @@ fun CasScreen(cast: List<Cast>, modifier: Modifier) {
     }
     LazyRow(
         content = {
-            items(cast.filter { it.profile_path != null }) { itemCast ->
+            items(cast.filter { true }) { itemCast ->
                 CastItemScreen(modifier = modifier, castItem = itemCast)
             }
-        })
+        }
+    )
+
+    Text(
+        modifier = modifier.padding(8.dp),
+        text = stringResource(id = string.text_trailer)
+    )
+    if (videos.isNotEmpty())
+        YoutubeScreen(
+            modifier = modifier,
+            videoId = videos.let { videos[0].key },
+            lifeCycleOwner = LocalLifecycleOwner.current
+        )
 }
 
 @Composable
@@ -298,7 +319,7 @@ fun CastItemScreen(modifier: Modifier, castItem: Cast?) {
                             bottom.linkTo(character.top)
                         }
                         .fillMaxWidth(),
-                    text = castItem?.name ?: "Error",
+                    text = castItem?.name.orEmpty(),
                     style = TextStyle(
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface
@@ -313,7 +334,7 @@ fun CastItemScreen(modifier: Modifier, castItem: Cast?) {
                             bottom.linkTo(parent.bottom)
                         }
                         .fillMaxWidth(),
-                    text = castItem?.character ?: "Error",
+                    text = castItem?.character.orEmpty(),
                     style = TextStyle(
                         fontWeight = FontWeight.ExtraLight,
                         color = MaterialTheme.colorScheme.onSurface
@@ -329,7 +350,7 @@ fun CastItemScreen(modifier: Modifier, castItem: Cast?) {
 @Composable
 fun MoviesDetailPreview() {
     val ctx = LocalContext.current
-    val viewMoDelMock = MoviesViewModel(null, null)
+    val viewMoDelMock = MoviesViewModel(null, null, null)
     MoviesDetailScreen(
         viewMoDelMock,
         navController = NavController(ctx),

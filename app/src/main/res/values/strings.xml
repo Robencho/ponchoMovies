@@ -11,6 +11,9 @@
     </string>
     <string name="top_bar_title_home" tools:ignore="ExtraTranslation">Home - Poncho Movies</string>
     <string name="btn_home_go_to_movies">Go To Poncho Movies</string>
+    <string name="overview_detail">Resumen</string>
+    <string name="text_cast">Reparto</string>
+    <string name="text_trailer">Trailer</string>
 
     <!-- Movies Detail Strings-->
     <string name="btn_on_back">Add to Favorites</string>
