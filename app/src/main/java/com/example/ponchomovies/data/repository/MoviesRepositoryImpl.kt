@@ -9,6 +9,7 @@ import com.example.ponchomovies.data.models.remote.mapper.mapFromListModel
 import com.example.ponchomovies.data.repository.paging.MoviePagingSource
 import com.example.ponchomovies.domain.model.Cast
 import com.example.ponchomovies.domain.model.Movie
+import com.example.ponchomovies.domain.model.Video
 import com.example.ponchomovies.domain.repository.MovieRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -17,7 +18,7 @@ import javax.inject.Singleton
 @Singleton
 class MoviesRepositoryImpl @Inject constructor(
     private val remoteDataSource: MovieRemoteDataSource
-):MovieRepository {
+) : MovieRepository {
     override suspend fun getMovies(): Flow<PagingData<Movie>> {
         return Pager(
             config = PagingConfig(pageSize = Constants.MAX_PAGE_SIZE, prefetchDistance = 2),
@@ -27,7 +28,15 @@ class MoviesRepositoryImpl @Inject constructor(
         ).flow
     }
 
-    override suspend fun getCast(movieId:Int): List<Cast> {
+    override suspend fun getCast(movieId: Int): List<Cast> {
         return remoteDataSource.getCast(movieId).cast.mapFromListModel()
+    }
+
+    override suspend fun getVideosByMovieId(movieId: Int): List<Video> {
+        return remoteDataSource.getVideosByMovie(
+            movieId = movieId,
+            apiKey = Constants.MOVIE_API_KEY,
+            appendToResponse = "videos"
+        ).videos.results.mapFromListModel()
     }
 }

@@ -6,10 +6,13 @@ import com.example.ponchomovies.data.models.remote.dto.response.CastItemDto
 import com.example.ponchomovies.data.models.remote.dto.response.CastResponseDto
 import com.example.ponchomovies.domain.model.Cast
 import com.example.ponchomovies.domain.model.Movie
+import com.example.ponchomovies.domain.model.Video
 import kotlinx.coroutines.flow.Flow
 
 interface MovieRepository {
     suspend fun getMovies(): Flow<PagingData<Movie>>
 
     suspend fun getCast(movieId:Int): List<Cast>
+
+    suspend fun getVideosByMovieId(movieId: Int): List<Video>
 }

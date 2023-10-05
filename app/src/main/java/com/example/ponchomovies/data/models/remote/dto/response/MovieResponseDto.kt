@@ -1,6 +1,7 @@
 package com.example.ponchomovies.data.models.remote.dto.response
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 data class MovieResponseDto(
     @SerializedName("id")
@@ -45,3 +46,11 @@ data class MovieResponseDto(
     @SerializedName("vote_count")
     val voteCount: Int
 )
+
+data class VideosDto(
+    @SerializedName("videos")
+    val videos : VideoResult
+)
+data class VideoResult(
+    val results: List<VideoDto>
+): Serializable
