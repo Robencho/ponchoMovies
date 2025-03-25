@@ -20,6 +20,8 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object RetrofitModule {
 
+    // todo esto cambiara
+
     @Singleton
     @Provides
     fun providesMoshi(): Moshi = Moshi.Builder().build()
